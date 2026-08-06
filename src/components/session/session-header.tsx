@@ -1,19 +1,19 @@
-import { formatDateTime } from "../../../helpers/time";
-import type { Session } from "../../../types";
+import { formatDateTime } from "@/helpers/date";
+import type { Session } from "@/types";
 
-type Props = {
+type SessionHeaderProps = {
   session: Session;
   titleDraft: string;
   setTitleDraft: React.Dispatch<React.SetStateAction<string>>;
   persistTitle: () => Promise<void>;
 };
 
-export const Header = ({
+export function SessionHeader({
   titleDraft,
   setTitleDraft,
   session,
   persistTitle,
-}: Props) => {
+}: SessionHeaderProps) {
   return (
     <div className="flex md:flex-row flex-col justify-between">
       <input
@@ -35,4 +35,4 @@ export const Header = ({
       </div>
     </div>
   );
-};
+}

@@ -1,21 +1,21 @@
 import { Link } from "react-router-dom";
-import { formatDate, formatDateTime } from "../../helpers/time";
-import type { SessionWithMeta } from "../../types";
+import { formatDate, formatDateTime } from "@/helpers/date";
+import type { SessionWithMeta } from "@/types";
 import {
   deleteSession,
   setSessionArchived,
   updateSessionTitle,
-} from "../../data/store";
-import { HiOutlineDocument } from "react-icons/hi2";
-import { CiCalendar, CiClock2 } from "react-icons/ci";
-import type { IconType } from "react-icons";
+} from "@/data/store";
+import { FileIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SessionProgressLabel } from "@/components/session-progress";
+import { icons } from "lucide-react";
 
-const Info = ({ icon: Icon, value }: { icon: IconType; value: string }) => {
+const Info = ({ icon, value }: { icon: keyof typeof icons; value: string }) => {
+  const Comp = icons[icon];
   return (
     <p className="flex items-center gap-x-1 text-xs font-medium text-muted-foreground">
-      <Icon className="size-4" />
+      <Comp className="size-4" />
       {value}
     </p>
   );
@@ -56,7 +56,7 @@ export function HistoryListItem({ session, refresh }: HistoryListItemProps) {
     <div className="flex justify-between items-center">
       <div className="flex min-w-0 flex-1 items-start gap-x-4">
         <span className="shrink-0 rounded-md bg-blue-100 p-2">
-          <HiOutlineDocument className="size-8 text-blue-500" />
+          <FileIcon className="size-8 text-blue-500" />
         </span>
 
         <div className="w-full max-w-sm flex-1 space-y-1">
@@ -65,11 +65,11 @@ export function HistoryListItem({ session, refresh }: HistoryListItemProps) {
           </p>
 
           <Info
-            icon={CiCalendar}
+            icon="Calendar"
             value={`Created ${formatDate(session.createdAt)}`}
           />
           <Info
-            icon={CiClock2}
+            icon="Clock"
             value={`Last edited ${formatDateTime(session.updatedAt)}`}
           />
 
@@ -83,7 +83,7 @@ export function HistoryListItem({ session, refresh }: HistoryListItemProps) {
       </div>
 
       <div className="flex gap-x-2 w-full sm:w-auto sm:shrink-0">
-        <Link to={`/sessions/${session.id}`}>
+        <Link to={`/?sessionId=${session.id}`}>
           <Button variant="link">Open</Button>
         </Link>
         <Button

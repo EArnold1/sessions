@@ -1,5 +1,5 @@
-import type { SessionWithMeta } from "../../types";
-import { HistoryListItem } from "./list-item";
+import type { SessionWithMeta } from "@/types";
+import { HistoryListItem } from "@/pages/history/components/list-item";
 
 type HistoryListProps = {
   sessions: SessionWithMeta[];

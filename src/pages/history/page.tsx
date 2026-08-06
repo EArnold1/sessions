@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { listSessions } from "../../data/store";
-import type { SessionWithMeta } from "../../types";
-import { FaHistory } from "react-icons/fa";
-import { HistoryList } from "./list";
+import { listSessions } from "@/data/store";
+import type { SessionWithMeta } from "@/types";
+import { RotateCcwClockIcon } from "lucide-react";
+import { HistoryList } from "@/pages/history/components/list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/empty-state";
 
 export function HistoryPage() {
   const [sessions, setSessions] = useState<SessionWithMeta[]>([]);
@@ -40,27 +41,32 @@ export function HistoryPage() {
     );
   }
 
+  if (!sessions.length) {
+    return (
+      <EmptyState
+        title="No sessions yet."
+        description="Add a session to con"
+        icon="SquareX"
+        actionBtn={{
+          size: "sm",
+          render: <Link to="/">Start your first session</Link>,
+        }}
+      />
+    );
+  }
+
   return (
-    <Card className="w-full w-max-sm py-0">
+    <Card className="w-full w-max-sm py-0 h-fit max-h-150 overflow-scroll gap-y-1">
       <CardHeader className="bg-foreground text-background p-4">
         <CardTitle>
           <h1 className="flex gap-x-2 items-center">
-            <FaHistory />
+            <RotateCcwClockIcon />
             <span className="font-medium text-xl">Session History</span>
           </h1>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-y-4 px-1 py-2">
-        {sessions.length === 0 ? (
-          <div className="empty-state stack-gap">
-            <p>No sessions yet.</p>
-            <Link to="/" className="btn btn-primary">
-              Start your first session
-            </Link>
-          </div>
-        ) : (
-          <HistoryList sessions={sessions} refresh={refresh} />
-        )}
+      <CardContent className="flex flex-col gap-y-4 px-1 pb-2">
+        <HistoryList sessions={sessions} refresh={refresh} />
       </CardContent>
     </Card>
   );

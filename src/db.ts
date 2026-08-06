@@ -1,5 +1,5 @@
 import Dexie, { type Table } from "dexie";
-import type { Session, TodoItem } from "./types";
+import type { Session, TodoItem } from "@/types";
 
 class TodoSessionsDb extends Dexie {
   sessions!: Table<Session, string>;

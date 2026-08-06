@@ -1,9 +1,10 @@
 import { Link, Navigate, Route, Routes } from "react-router-dom";
 import { HistoryPage } from "@/pages/history/page";
 import { HomePage } from "@/pages/home-page";
-import { PlusIcon, SquareCheckIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { SquareCheckIcon } from "lucide-react";
 import { useStartSessionNavigation } from "@/hooks/useStartSessionNavigation";
+import { IconButton } from "./components/icon-button";
+import { LinkButton } from "./components/link-button";
 
 function App() {
   const { startSession, isCreating } = useStartSessionNavigation();
@@ -16,20 +17,23 @@ function App() {
           TODO Sessions
         </Link>
         <nav className="flex gap-x-2">
-          <Button
+          <IconButton
             variant="outline"
             size="icon"
             disabled={isCreating}
             onClick={() => {
               void startSession();
             }}
-          >
-            <PlusIcon />
-          </Button>
-          <Button
-            variant="ghost"
-            className="rounded-full"
-            render={<Link to="/history">History</Link>}
+            icon="Plus"
+          />
+
+          <LinkButton
+            to="/history"
+            btnProps={{
+              variant: "ghost",
+              className: "rounded-full",
+              children: "History",
+            }}
           />
         </nav>
       </header>

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { listSessions } from "@/data/store";
 import type { SessionWithMeta } from "@/types";
 import { RotateCcwClockIcon } from "lucide-react";
 import { HistoryList } from "@/pages/history/components/list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/empty-state";
+import { Loader } from "@/components/loader";
 
 export function HistoryPage() {
   const [sessions, setSessions] = useState<SessionWithMeta[]>([]);
@@ -35,9 +35,11 @@ export function HistoryPage() {
 
   if (isLoading) {
     return (
-      <section className="panel">
-        <p>Loading history...</p>
-      </section>
+      <Loader
+        variant="panel"
+        title="Preparing history"
+        message="Loading your past sessions"
+      />
     );
   }
 
@@ -47,9 +49,11 @@ export function HistoryPage() {
         title="No sessions yet."
         description="Add a session to con"
         icon="SquareX"
-        actionBtn={{
-          size: "sm",
-          render: <Link to="/">Start your first session</Link>,
+        actionProps={{
+          btnProps: {
+            size: "sm",
+          },
+          to: "/",
         }}
       />
     );

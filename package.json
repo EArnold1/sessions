@@ -17,6 +17,7 @@
     "@tiptap/extension-list": "^3.29.2",
     "@tiptap/extension-paragraph": "^3.29.2",
     "@tiptap/extension-text": "^3.29.2",
+    "@tiptap/extensions": "^3.29.2",
     "@tiptap/react": "^3.29.2",
     "@tiptap/starter-kit": "^3.29.2",
     "class-variance-authority": "^0.7.1",

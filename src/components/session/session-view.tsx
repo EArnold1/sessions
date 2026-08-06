@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   getSession,
   listTodosBySession,
@@ -8,9 +7,16 @@ import {
 import type { Session, TodoItem } from "@/types";
 import { TaskListEditor } from "@/components/editor/task-list-editor";
 import { SessionHeader } from "./session-header";
-import { SessionProgressLabel } from "@/components/session-progress";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { EmptyState } from "@/components/empty-state";
+import { CloudCheck, CloudSync } from "lucide-react";
+import { Loader } from "@/components/loader";
 
 type SessionViewProps = {
   sessionId: string;
@@ -20,7 +26,7 @@ export function SessionView({ sessionId }: SessionViewProps) {
   const [session, setSession] = useState<Session | null>(null);
   const [titleDraft, setTitleDraft] = useState("Untitled");
   const [todos, setTodos] = useState<TodoItem[]>([]);
-  const [saveStatus, setSaveStatus] = useState<"saving" | "saved">("saved");
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const checkedCount = useMemo(
@@ -86,9 +92,11 @@ export function SessionView({ sessionId }: SessionViewProps) {
 
   if (isLoading) {
     return (
-      <section className="panel">
-        <p>Loading session...</p>
-      </section>
+      <Loader
+        variant="panel"
+        title="Preparing session"
+        message="Loading your checklist and progress"
+      />
     );
   }
 
@@ -98,16 +106,19 @@ export function SessionView({ sessionId }: SessionViewProps) {
         title="Session not found"
         description="The requested session does not exist anymore."
         icon="SquareX"
-        actionBtn={{
-          size: "sm",
-          render: <Link to="/history">Go to History</Link>,
+        actionProps={{
+          to: "/history",
+          children: "Go to History",
+          btnProps: {
+            size: "sm",
+          },
         }}
       />
     );
   }
 
   return (
-    <Card className="w-full w-max-sm py-0">
+    <Card className="w-full w-max-sm max-h-140 overflow-scroll pt-0 pb-2">
       <CardHeader className="bg-foreground text-background p-4">
         <CardTitle>
           <SessionHeader
@@ -115,27 +126,30 @@ export function SessionView({ sessionId }: SessionViewProps) {
             setTitleDraft={setTitleDraft}
             session={session}
             persistTitle={persistTitle}
+            todosLength={todos.length}
+            checkedCount={checkedCount}
           />
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-y-4 p-4">
+      <CardContent className="p-4 max-h-135 overflow-scroll">
         <TaskListEditor
           sessionId={session.id}
           todos={todos}
           setTodos={setTodos}
           handleSetSession={handleSetSession}
-          setSaveStatus={setSaveStatus}
-        />
-
-        <p className="text-xs text-muted-foreground" aria-live="polite">
-          {saveStatus === "saving" ? "Saving changes..." : "All changes saved"}
-        </p>
-
-        <SessionProgressLabel
-          todosLength={todos.length}
-          checkedItems={checkedCount}
+          setIsSaving={setIsSaving}
         />
       </CardContent>
+      <CardFooter className="gap-x-1 px-4 w-full items-center text-xs text-muted-foreground">
+        {isSaving ? (
+          <>
+            <CloudSync />
+            <p>Saving...</p>
+          </>
+        ) : (
+          <CloudCheck />
+        )}
+      </CardFooter>
     </Card>
   );
 }

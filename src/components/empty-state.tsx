@@ -1,5 +1,4 @@
 import { icons } from "lucide-react";
-import { Button, type ButtonProps } from "@/components/ui/button";
 import {
   Empty,
   EmptyContent,
@@ -9,15 +8,16 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Card, CardContent } from "@/components/ui/card";
+import { LinkButton, type LinkButtonProps } from "@/components/link-button";
 
 type Props = {
   title: string;
   description: string;
-  actionBtn: ButtonProps;
+  actionProps: LinkButtonProps;
   icon: keyof typeof icons;
 };
 
-export function EmptyState({ title, description, actionBtn, icon }: Props) {
+export function EmptyState({ title, description, actionProps, icon }: Props) {
   const Icon = icons[icon];
 
   return (
@@ -32,7 +32,7 @@ export function EmptyState({ title, description, actionBtn, icon }: Props) {
             <EmptyDescription>{description}</EmptyDescription>
           </EmptyHeader>
           <EmptyContent className="flex-row justify-center gap-2">
-            <Button {...actionBtn} />
+            <LinkButton {...actionProps} />
           </EmptyContent>
         </Empty>
       </CardContent>

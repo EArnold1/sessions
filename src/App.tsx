@@ -1,7 +1,7 @@
 import { Link, Navigate, Route, Routes } from "react-router-dom";
 import { HistoryPage } from "./pages/HistoryPage";
 import { HomePage } from "./pages/HomePage";
-import { SessionPage } from "./pages/SessionPage";
+import { SessionPage } from "./pages/session/page";
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
         </nav>
       </header>
 
-      <main className="page-wrap">
+      <main className="page-wrap text-gray-500">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/sessions/:sessionId" element={<SessionPage />} />

@@ -139,3 +139,45 @@ export async function deleteTodo(todoId: string): Promise<void> {
     await db.sessions.update(todo.sessionId, { updatedAt: now });
   });
 }
+
+export type TodoDraft = {
+  text: string;
+  checked: boolean;
+  order: number;
+};
+
+export async function replaceTodosForSession(
+  sessionId: string,
+  drafts: TodoDraft[],
+): Promise<number> {
+  const now = Date.now();
+  const normalizedDrafts = drafts
+    .map((draft, index) => ({
+      text: draft.text.trim(),
+      checked: draft.checked,
+      order: index + 1,
+    }))
+    .filter((draft) => draft.text.length > 0);
+
+  const todos: TodoItem[] = normalizedDrafts.map((draft) => ({
+    id: crypto.randomUUID(),
+    sessionId,
+    text: draft.text,
+    checked: draft.checked,
+    order: draft.order,
+    createdAt: now,
+    updatedAt: now,
+  }));
+
+  await db.transaction("rw", db.sessions, db.todos, async () => {
+    await db.todos.where("sessionId").equals(sessionId).delete();
+
+    if (todos.length > 0) {
+      await db.todos.bulkAdd(todos);
+    }
+
+    await db.sessions.update(sessionId, { updatedAt: now });
+  });
+
+  return now;
+}

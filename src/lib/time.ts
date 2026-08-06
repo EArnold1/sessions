@@ -1,16 +1,9 @@
-const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
-  dateStyle: "medium",
-  timeStyle: "short",
-});
+import { formatDistanceToNow, formatDate as formatDateFn } from "date-fns";
 
-const dateFormatter = new Intl.DateTimeFormat(undefined, {
-  dateStyle: "medium",
-});
+export const formatDateTime = (timestamp: number): string => {
+  return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
+};
 
-export function formatDateTime(value: number): string {
-  return dateTimeFormatter.format(new Date(value));
-}
-
-export function formatDate(value: number): string {
-  return dateFormatter.format(new Date(value));
-}
+export const formatDate = (timestamp: number): string => {
+  return formatDateFn(new Date(timestamp), "yyyy-MM-dd");
+};

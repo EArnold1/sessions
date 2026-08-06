@@ -1,0 +1,145 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import {
+  getSession,
+  listTodosBySession,
+  updateSessionTitle,
+} from "../../data/store";
+import type { Session, TodoItem } from "../../types";
+import { TaskListEditor } from "../../components/editor/task-list-editor";
+import { Header } from "./components/header";
+import { Pill } from "../../components/pill";
+
+export function SessionPage() {
+  const { sessionId } = useParams();
+  const navigate = useNavigate();
+
+  const [session, setSession] = useState<Session | null>(null);
+  const [titleDraft, setTitleDraft] = useState("Untitled");
+  const [todos, setTodos] = useState<TodoItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const saveTimerRef = useRef<number | null>(null);
+  const ignoreEditorUpdateRef = useRef(false);
+
+  const checkedCount = useMemo(
+    () => todos.filter((todo) => todo.checked).length,
+    [todos],
+  );
+
+  const handleSetSession = (updatedAt: number) => {
+    setSession((previous) => {
+      if (!previous) {
+        return previous;
+      }
+      return { ...previous, updatedAt };
+    });
+  };
+
+  const loadSessionData = async (id: string) => {
+    const [loadedSession, loadedTodos] = await Promise.all([
+      getSession(id),
+      listTodosBySession(id),
+    ]);
+
+    if (!loadedSession) {
+      setSession(null);
+      setTodos([]);
+      return;
+    }
+
+    setSession(loadedSession);
+    setTitleDraft(loadedSession.title);
+    setTodos(loadedTodos);
+  };
+
+  useEffect(() => {
+    if (!sessionId) {
+      navigate("/", { replace: true });
+      return;
+    }
+
+    let alive = true;
+    const bootstrap = async () => {
+      setIsLoading(true);
+      await loadSessionData(sessionId);
+      if (alive) {
+        setIsLoading(false);
+      }
+    };
+
+    void bootstrap();
+    return () => {
+      alive = false;
+    };
+  }, [navigate, sessionId]);
+
+  useEffect(() => {
+    const timer = saveTimerRef.current;
+    return () => {
+      if (timer) {
+        window.clearTimeout(timer);
+      }
+    };
+  }, []);
+
+  const persistTitle = async () => {
+    if (!sessionId || !session) {
+      return;
+    }
+
+    if (titleDraft.trim() === session.title) {
+      return;
+    }
+
+    try {
+      await updateSessionTitle(sessionId, titleDraft);
+      await loadSessionData(sessionId);
+    } finally {
+      //
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <section className="panel">
+        <p>Loading session...</p>
+      </section>
+    );
+  }
+
+  if (!session) {
+    return (
+      <section className="panel stack-gap">
+        <h1 className="panel-title">Session not found</h1>
+        <p>The requested session does not exist anymore.</p>
+        <Link to="/history" className="btn btn-ghost">
+          Go to History
+        </Link>
+      </section>
+    );
+  }
+
+  return (
+    <section className="flex flex-col gap-y-4 shadow bg-white rounded-md">
+      <Header
+        titleDraft={titleDraft}
+        setTitleDraft={setTitleDraft}
+        session={session}
+        persistTitle={persistTitle}
+      />
+
+      <div className="p-4 flex flex-col gap-y-4">
+        <TaskListEditor
+          sessionId={session.id}
+          setTodos={setTodos}
+          handleSetSession={handleSetSession}
+          setSaveStatus={() => {}}
+          ignoreEditorUpdateRef={ignoreEditorUpdateRef}
+          saveTimerRef={saveTimerRef}
+        />
+
+        <Pill item={`${checkedCount}/${todos.length} complete`} />
+      </div>
+    </section>
+  );
+}

@@ -1,0 +1,58 @@
+/* Basic editor styles */
+.tiptap :first-child {
+  margin-top: 0;
+}
+
+/* List styles */
+.tiptap ul,
+.tiptap ol {
+  padding: 0 1rem;
+  margin: 1.25rem 1rem 1.25rem 0.4rem;
+}
+
+.tiptap ul li p,
+.tiptap ol li p {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+
+/* Task list specific styles */
+.tiptap ul[data-type="taskList"] {
+  list-style: none;
+  margin-left: 0;
+  padding: 0;
+}
+
+.tiptap ul[data-type="taskList"] li {
+  align-items: center;
+  display: flex;
+}
+
+.tiptap ul[data-type="taskList"] li[data-checked="true"] > div {
+  text-decoration: line-through;
+  color: var(--color-gray-500);
+}
+
+.tiptap ul[data-type="taskList"] li > label {
+  display: inline-flex;
+  margin: 0 0.5rem 0 0;
+  user-select: none;
+}
+
+.tiptap ul[data-type="taskList"] li > label > input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+}
+
+.tiptap ul[data-type="taskList"] li > div {
+  flex: 1 1 auto;
+  font-weight: 500;
+}
+
+.tiptap ul[data-type="taskList"] input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.tiptap.ProseMirror-focused {
+  outline: none;
+}

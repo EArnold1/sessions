@@ -6,14 +6,10 @@
 /* List styles */
 .tiptap ul,
 .tiptap ol {
-  padding: 0 1rem;
-  margin: 1.25rem 1rem 1.25rem 0.4rem;
-}
-
-.tiptap ul li p,
-.tiptap ol li p {
-  margin-top: 0.25em;
-  margin-bottom: 0.25em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0 0 1.25rem 0;
 }
 
 /* Task list specific styles */

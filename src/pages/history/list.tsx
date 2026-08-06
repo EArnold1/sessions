@@ -9,7 +9,7 @@ type HistoryListProps = {
 
 export function HistoryList({ sessions, refresh }: HistoryListProps) {
   return (
-    <div className="flex flex-col gap-y-6 m-4">
+    <div className="flex flex-col gap-y-8 m-4">
       {sessions.map((session) => (
         <HistoryListItem key={session.id} session={session} refresh={refresh} />
       ))}

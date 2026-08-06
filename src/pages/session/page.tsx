@@ -8,7 +8,8 @@ import {
 import type { Session, TodoItem } from "../../types";
 import { TaskListEditor } from "../../components/editor/task-list-editor";
 import { Header } from "./components/header";
-import { Pill } from "../../components/pill";
+import { SessionProgressLabel } from "@/components/session-progress";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function SessionPage() {
   const { sessionId } = useParams();
@@ -120,26 +121,34 @@ export function SessionPage() {
   }
 
   return (
-    <section className="flex flex-col gap-y-4 shadow bg-white rounded-md">
-      <Header
-        titleDraft={titleDraft}
-        setTitleDraft={setTitleDraft}
-        session={session}
-        persistTitle={persistTitle}
-      />
+    <div>
+      <Card className="w-full w-max-sm py-0">
+        <CardHeader className="bg-foreground text-background p-4">
+          <CardTitle>
+            <Header
+              titleDraft={titleDraft}
+              setTitleDraft={setTitleDraft}
+              session={session}
+              persistTitle={persistTitle}
+            />
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-y-4 p-4">
+          <TaskListEditor
+            sessionId={session.id}
+            setTodos={setTodos}
+            handleSetSession={handleSetSession}
+            setSaveStatus={() => {}}
+            ignoreEditorUpdateRef={ignoreEditorUpdateRef}
+            saveTimerRef={saveTimerRef}
+          />
 
-      <div className="p-4 flex flex-col gap-y-4">
-        <TaskListEditor
-          sessionId={session.id}
-          setTodos={setTodos}
-          handleSetSession={handleSetSession}
-          setSaveStatus={() => {}}
-          ignoreEditorUpdateRef={ignoreEditorUpdateRef}
-          saveTimerRef={saveTimerRef}
-        />
-
-        <Pill item={`${checkedCount}/${todos.length} complete`} />
-      </div>
-    </section>
+          <SessionProgressLabel
+            todosLength={todos.length}
+            checkedItems={checkedCount}
+          />
+        </CardContent>
+      </Card>
+    </div>
   );
 }

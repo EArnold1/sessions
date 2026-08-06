@@ -1,4 +1,11 @@
 {
+  "compilerOptions": {
+    "ignoreDeprecations": "6.0", // used to suppress baseUrl error
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },

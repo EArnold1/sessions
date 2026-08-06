@@ -4,6 +4,7 @@ import { listSessions } from "../../data/store";
 import type { SessionWithMeta } from "../../types";
 import { FaHistory } from "react-icons/fa";
 import { HistoryList } from "./list";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function HistoryPage() {
   const [sessions, setSessions] = useState<SessionWithMeta[]>([]);
@@ -40,24 +41,27 @@ export function HistoryPage() {
   }
 
   return (
-    <section className="flex flex-col gap-y-4 shadow-xl bg-white rounded-md">
-      <div className="flex md:flex-row flex-col justify-between bg-black px-4 py-6 text-white md:items-center rounded-t-md">
-        <h1 className="flex gap-x-2 items-center">
-          <FaHistory />
-          <span className="font-medium text-xl">Session History</span>
-        </h1>
-      </div>
-
-      {sessions.length === 0 ? (
-        <div className="empty-state stack-gap">
-          <p>No sessions yet.</p>
-          <Link to="/" className="btn btn-primary">
-            Start your first session
-          </Link>
-        </div>
-      ) : (
-        <HistoryList sessions={sessions} refresh={refresh} />
-      )}
-    </section>
+    <Card className="w-full w-max-sm py-0">
+      <CardHeader className="bg-foreground text-background p-4">
+        <CardTitle>
+          <h1 className="flex gap-x-2 items-center">
+            <FaHistory />
+            <span className="font-medium text-xl">Session History</span>
+          </h1>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-y-4 px-1 py-2">
+        {sessions.length === 0 ? (
+          <div className="empty-state stack-gap">
+            <p>No sessions yet.</p>
+            <Link to="/" className="btn btn-primary">
+              Start your first session
+            </Link>
+          </div>
+        ) : (
+          <HistoryList sessions={sessions} refresh={refresh} />
+        )}
+      </CardContent>
+    </Card>
   );
 }

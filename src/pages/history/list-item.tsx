@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { formatDate, formatDateTime } from "../../lib/time";
+import { formatDate, formatDateTime } from "../../helpers/time";
 import type { SessionWithMeta } from "../../types";
 import {
   deleteSession,
@@ -9,11 +9,12 @@ import {
 import { HiOutlineDocument } from "react-icons/hi2";
 import { CiCalendar, CiClock2 } from "react-icons/ci";
 import type { IconType } from "react-icons";
-import { Button } from "../../components/button";
+import { Button } from "@/components/ui/button";
+import { SessionProgressLabel } from "@/components/session-progress";
 
 const Info = ({ icon: Icon, value }: { icon: IconType; value: string }) => {
   return (
-    <p className="text-xs flex gap-x-1 items-end font-medium">
+    <p className="flex items-center gap-x-1 text-xs font-medium text-muted-foreground">
       <Icon className="size-4" />
       {value}
     </p>
@@ -53,15 +54,14 @@ export function HistoryListItem({ session, refresh }: HistoryListItemProps) {
 
   return (
     <div className="flex justify-between items-center">
-      <div className="flex gap-x-4 items-start">
-        <span className="p-2 rounded-md bg-blue-100">
+      <div className="flex min-w-0 flex-1 items-start gap-x-4">
+        <span className="shrink-0 rounded-md bg-blue-100 p-2">
           <HiOutlineDocument className="size-8 text-blue-500" />
         </span>
 
-        <div className="flex flex-col gap-y-1">
-          <p className="font-bold text-xl">
+        <div className="w-full max-w-sm flex-1 space-y-1">
+          <p className="text-xl font-bold leading-tight truncate">
             {session.title}
-            {session.archived ? <span className="pill">Archived</span> : null}
           </p>
 
           <Info
@@ -72,12 +72,17 @@ export function HistoryListItem({ session, refresh }: HistoryListItemProps) {
             icon={CiClock2}
             value={`Last edited ${formatDateTime(session.updatedAt)}`}
           />
-        </div>
 
-        {/* progress bar */}
+          <div className="mt-4">
+            <SessionProgressLabel
+              todosLength={session.itemCount}
+              checkedItems={session.completedCount}
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="history-actions">
+      <div className="flex gap-x-2 w-full sm:w-auto sm:shrink-0">
         <Link to={`/sessions/${session.id}`}>
           <Button variant="link">Open</Button>
         </Link>
@@ -90,7 +95,7 @@ export function HistoryListItem({ session, refresh }: HistoryListItemProps) {
           Rename
         </Button>
         <Button
-          variant="ghost"
+          variant="outline"
           onClick={() => {
             void handleArchive(session.id, Boolean(session.archived));
           }}
@@ -98,7 +103,7 @@ export function HistoryListItem({ session, refresh }: HistoryListItemProps) {
           {session.archived ? "Unarchive" : "Archive"}
         </Button>
         <Button
-          variant="danger"
+          variant="destructive"
           onClick={() => {
             void handleDelete(session.id);
           }}

@@ -6,8 +6,8 @@ import { CiSquareCheck } from "react-icons/ci";
 
 function App() {
   return (
-    <div className="h-min grid">
-      <header className="topbar">
+    <div className="h-min grid grid-cols-1 gap-y-4">
+      <header className="flex justify-between p-6">
         <Link to="/" className="flex gap-x-2 font-bold items-center">
           <CiSquareCheck className="size-6" />
           TODO Sessions
@@ -15,7 +15,7 @@ function App() {
         <nav className="b">
           <Link
             to="/history"
-            className="text-input px-3 py-2 rounded-full border border-line"
+            className="text-secondary-foreground px-3 py-2 rounded-full border border-line"
           >
             History
           </Link>

@@ -1,4 +1,4 @@
-import { formatDateTime } from "../../../lib/time";
+import { formatDateTime } from "../../../helpers/time";
 import type { Session } from "../../../types";
 
 type Props = {
@@ -15,7 +15,7 @@ export const Header = ({
   persistTitle,
 }: Props) => {
   return (
-    <div className="flex md:flex-row flex-col justify-between bg-black p-4 text-white md:items-center rounded-t-md">
+    <div className="flex md:flex-row flex-col justify-between">
       <input
         aria-label="Session title"
         className="text-3xl font-medium bg-transparent focus:outline-none p-0"

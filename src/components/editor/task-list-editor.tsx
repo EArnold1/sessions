@@ -6,7 +6,7 @@ import { TaskItem, TaskList } from "@tiptap/extension-list";
 import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
 import { EditorContent, useEditor } from "@tiptap/react";
-import { taskDocToTodos } from "../../lib/tiptapTasks";
+import { taskDocToTodos } from "../../helpers/tiptapTasks";
 
 const CustomDocument = Document.extend({
   content: "taskList",

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   getSession,
@@ -18,23 +18,22 @@ export function SessionPage() {
   const [session, setSession] = useState<Session | null>(null);
   const [titleDraft, setTitleDraft] = useState("Untitled");
   const [todos, setTodos] = useState<TodoItem[]>([]);
+  const [saveStatus, setSaveStatus] = useState<"saving" | "saved">("saved");
   const [isLoading, setIsLoading] = useState(true);
-  const saveTimerRef = useRef<number | null>(null);
-  const ignoreEditorUpdateRef = useRef(false);
 
   const checkedCount = useMemo(
     () => todos.filter((todo) => todo.checked).length,
     [todos],
   );
 
-  const handleSetSession = (updatedAt: number) => {
+  const handleSetSession = useCallback((updatedAt: number) => {
     setSession((previous) => {
       if (!previous) {
         return previous;
       }
       return { ...previous, updatedAt };
     });
-  };
+  }, []);
 
   const loadSessionData = async (id: string) => {
     const [loadedSession, loadedTodos] = await Promise.all([
@@ -73,15 +72,6 @@ export function SessionPage() {
       alive = false;
     };
   }, [navigate, sessionId]);
-
-  useEffect(() => {
-    const timer = saveTimerRef.current;
-    return () => {
-      if (timer) {
-        window.clearTimeout(timer);
-      }
-    };
-  }, []);
 
   const persistTitle = async () => {
     if (!sessionId || !session) {
@@ -136,12 +126,17 @@ export function SessionPage() {
         <CardContent className="flex flex-col gap-y-4 p-4">
           <TaskListEditor
             sessionId={session.id}
+            todos={todos}
             setTodos={setTodos}
             handleSetSession={handleSetSession}
-            setSaveStatus={() => {}}
-            ignoreEditorUpdateRef={ignoreEditorUpdateRef}
-            saveTimerRef={saveTimerRef}
+            setSaveStatus={setSaveStatus}
           />
+
+          <p className="text-xs text-muted-foreground" aria-live="polite">
+            {saveStatus === "saving"
+              ? "Saving changes..."
+              : "All changes saved"}
+          </p>
 
           <SessionProgressLabel
             todosLength={todos.length}

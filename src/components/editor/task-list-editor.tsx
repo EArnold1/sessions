@@ -1,4 +1,5 @@
 import "../../editor-style.css";
+import { useEffect, useMemo, useRef } from "react";
 import type { TodoItem } from "../../types";
 import { replaceTodosForSession } from "../../data/store";
 import Document from "@tiptap/extension-document";
@@ -6,46 +7,53 @@ import { TaskItem, TaskList } from "@tiptap/extension-list";
 import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
 import { EditorContent, useEditor } from "@tiptap/react";
-import { taskDocToTodos } from "../../helpers/tiptapTasks";
+import { taskDocToTodos, todosToTaskDoc } from "../../helpers/tiptapTasks";
+import { debounce } from "../../helpers/debounce";
 
 const CustomDocument = Document.extend({
   content: "taskList",
 });
 
-const CustomTaskItem = TaskItem.extend({
-  content: "inline*",
-});
-
 type TaskListEditorProps = {
   sessionId: string;
+  todos: TodoItem[];
   setTodos: (todos: TodoItem[]) => void;
   handleSetSession: (updatedAt: number) => void;
   setSaveStatus: (status: "saving" | "saved") => void;
-  ignoreEditorUpdateRef: React.MutableRefObject<boolean>;
-  saveTimerRef: React.MutableRefObject<number | null>;
 };
 
 export const TaskListEditor = ({
   sessionId,
+  todos,
   setTodos,
   handleSetSession,
   setSaveStatus,
-  ignoreEditorUpdateRef,
-  saveTimerRef,
 }: TaskListEditorProps) => {
+  const isHydratingRef = useRef(false);
+  const skipNextHydrationRef = useRef(false);
+
+  const debouncedPersist = useMemo(
+    () =>
+      debounce((drafts: ReturnType<typeof taskDocToTodos>) => {
+        void (async () => {
+          const updatedAt = await replaceTodosForSession(sessionId, drafts);
+          handleSetSession(updatedAt);
+          setSaveStatus("saved");
+        })();
+      }, 400),
+    [handleSetSession, sessionId, setSaveStatus],
+  );
+
   const editor = useEditor({
-    extensions: [CustomDocument, Paragraph, Text, TaskList, CustomTaskItem],
-    content: `
-      <ul data-type="taskList">
-        <li data-type="taskItem">just doo it</li>
-      </ul>
-    `,
+    extensions: [CustomDocument, Paragraph, Text, TaskList, TaskItem],
+    content: todosToTaskDoc(todos),
     onUpdate: ({ editor: currentEditor }) => {
-      if (!sessionId || ignoreEditorUpdateRef.current) {
+      if (!sessionId || isHydratingRef.current) {
         return;
       }
 
       const drafts = taskDocToTodos(currentEditor.getJSON());
+      const now = Date.now();
       const nextTodos: TodoItem[] = drafts
         .filter((draft) => draft.text.length > 0)
         .map((draft) => ({
@@ -54,26 +62,40 @@ export const TaskListEditor = ({
           text: draft.text,
           checked: draft.checked,
           order: draft.order,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
+          createdAt: now,
+          updatedAt: now,
         }));
 
+      skipNextHydrationRef.current = true;
       setTodos(nextTodos);
-
       setSaveStatus("saving");
-      if (saveTimerRef.current) {
-        window.clearTimeout(saveTimerRef.current);
-      }
 
-      saveTimerRef.current = window.setTimeout(() => {
-        void (async () => {
-          const updatedAt = await replaceTodosForSession(sessionId, drafts);
-          handleSetSession(updatedAt);
-          setSaveStatus("saved");
-        })();
-      }, 400);
+      debouncedPersist(drafts);
     },
   });
+
+  useEffect(() => {
+    return () => {
+      debouncedPersist.cancel();
+    };
+  }, [debouncedPersist]);
+
+  useEffect(() => {
+    if (!editor) {
+      return;
+    }
+
+    if (skipNextHydrationRef.current) {
+      skipNextHydrationRef.current = false;
+      return;
+    }
+
+    isHydratingRef.current = true;
+    editor.commands.setContent(todosToTaskDoc(todos), {
+      emitUpdate: false,
+    });
+    isHydratingRef.current = false;
+  }, [editor, todos]);
 
   return <EditorContent editor={editor} />;
 };

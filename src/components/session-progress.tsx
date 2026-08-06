@@ -11,11 +11,10 @@ export function SessionProgressLabel({
   todosLength: number;
   checkedItems: number;
 }) {
+  const progress = todosLength === 0 ? 0 : (checkedItems / todosLength) * 100;
+
   return (
-    <Progress
-      value={(checkedItems / todosLength) * 100}
-      className="w-full max-w-xs"
-    >
+    <Progress value={progress} className="w-full max-w-xs">
       <ProgressLabel>{`${checkedItems}/${todosLength} complete`}</ProgressLabel>
       <ProgressValue />
     </Progress>

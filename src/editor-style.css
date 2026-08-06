@@ -24,7 +24,7 @@
   display: flex;
 }
 
-.tiptap ul[data-type="taskList"] li[data-checked="true"] > div {
+.tiptap ul[data-type="taskList"] li[data-checked="true"] > div > p {
   text-decoration: line-through;
   color: var(--color-gray-500);
 }

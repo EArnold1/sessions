@@ -136,32 +136,9 @@
 body {
   margin: 0;
   min-height: 100vh;
-  color: var(--ink);
   font-family: "Avenir Next", "Nunito Sans", "Trebuchet MS", sans-serif;
-  background: oklch(100% 0.00011 271.152 / 0.702);
 }
 
 button {
   cursor: pointer;
-}
-
-.page-wrap {
-  width: min(980px, 100%);
-  margin: 0 auto;
-  padding: 0 1rem 2.5rem;
-}
-
-@media (max-width: 640px) {
-  .todo-form {
-    grid-template-columns: 1fr;
-  }
-
-  .todo-item,
-  .history-item {
-    flex-direction: column;
-  }
-
-  .history-actions {
-    justify-content: flex-start;
-  }
 }

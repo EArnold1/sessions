@@ -16,7 +16,7 @@ export function SessionProgressLabel({
   return (
     <Progress value={progress} className="w-full max-w-xs">
       <ProgressLabel>{`${checkedItems}/${todosLength} complete`}</ProgressLabel>
-      <ProgressValue className="text-background" />
+      <ProgressValue />
     </Progress>
   );
 }

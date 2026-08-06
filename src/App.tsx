@@ -1,17 +1,22 @@
 import { Link, Navigate, Route, Routes } from "react-router-dom";
-import { HistoryPage } from "./pages/HistoryPage";
+import { HistoryPage } from "./pages/history/page";
 import { HomePage } from "./pages/HomePage";
 import { SessionPage } from "./pages/session/page";
+import { CiSquareCheck } from "react-icons/ci";
 
 function App() {
   return (
-    <div className="app-shell">
+    <div className="h-min grid">
       <header className="topbar">
-        <Link to="/" className="brand">
+        <Link to="/" className="flex gap-x-2 font-bold items-center">
+          <CiSquareCheck className="size-6" />
           TODO Sessions
         </Link>
-        <nav className="topbar-nav">
-          <Link to="/history" className="nav-link">
+        <nav className="b">
+          <Link
+            to="/history"
+            className="text-input px-3 py-2 rounded-full border border-line"
+          >
             History
           </Link>
         </nav>

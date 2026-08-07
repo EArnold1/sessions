@@ -28,6 +28,7 @@ export function SessionView({ sessionId }: SessionViewProps) {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   const checkedCount = useMemo(
     () => todos.filter((todo) => todo.checked).length,
@@ -61,21 +62,42 @@ export function SessionView({ sessionId }: SessionViewProps) {
   }, [sessionId]);
 
   useEffect(() => {
-    let alive = true;
+    let active = true;
 
     const bootstrap = async () => {
       setIsLoading(true);
-      await loadSessionData();
-      if (alive) {
-        setIsLoading(false);
+      setError(null);
+      try {
+        const [loadedSession, loadedTodos] = await Promise.all([
+          getSession(sessionId),
+          listTodosBySession(sessionId),
+        ]);
+        if (!active) {
+          return;
+        }
+        setSession(loadedSession ?? null);
+        setTitleDraft(loadedSession?.title ?? "Untitled");
+        setTodos(loadedTodos);
+      } catch (loadError) {
+        if (active) {
+          setError(
+            loadError instanceof Error
+              ? loadError
+              : new Error("Unable to load this session"),
+          );
+        }
+      } finally {
+        if (active) {
+          setIsLoading(false);
+        }
       }
     };
 
     void bootstrap();
     return () => {
-      alive = false;
+      active = false;
     };
-  }, [loadSessionData]);
+  }, [loadSessionData, sessionId]);
 
   const persistTitle = async () => {
     if (!session) {
@@ -100,12 +122,27 @@ export function SessionView({ sessionId }: SessionViewProps) {
     );
   }
 
+  if (error) {
+    return (
+      <EmptyState
+        title="Unable to load session"
+        description={error.message}
+        icon={CloudSync}
+        actionProps={{
+          to: "/history",
+          children: "Return to History",
+          btnProps: { size: "sm" },
+        }}
+      />
+    );
+  }
+
   if (!session) {
     return (
       <EmptyState
         title="Session not found"
         description="The requested session does not exist anymore."
-        icon="SquareX"
+        icon={CloudSync}
         actionProps={{
           to: "/history",
           children: "Go to History",
@@ -118,7 +155,7 @@ export function SessionView({ sessionId }: SessionViewProps) {
   }
 
   return (
-    <Card className="w-full w-max-sm max-h-140 overflow-scroll pt-0 pb-2">
+    <Card className="w-full max-h-140 overflow-scroll pt-0 pb-2">
       <CardHeader className="bg-foreground text-background p-4">
         <CardTitle>
           <SessionHeader
@@ -138,6 +175,7 @@ export function SessionView({ sessionId }: SessionViewProps) {
           setTodos={setTodos}
           handleSetSession={handleSetSession}
           setIsSaving={setIsSaving}
+          onSaveError={setError}
         />
       </CardContent>
       <CardFooter className="gap-x-1 px-4 w-full items-center text-xs text-muted-foreground">

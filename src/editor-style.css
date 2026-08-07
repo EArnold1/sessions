@@ -49,6 +49,6 @@
   cursor: pointer;
 }
 
-.tiptap.ProseMirror-focused {
+.tiptap.ProseMirror:focus-visible {
   outline: none;
 }

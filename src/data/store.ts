@@ -25,25 +25,23 @@ export async function getSession(
 
 export async function listSessions(): Promise<SessionWithMeta[]> {
   const sessions = await db.sessions.orderBy("updatedAt").reverse().toArray();
+  const todos = await db.todos.toArray();
+  const counts = new Map<string, { itemCount: number; completedCount: number }>();
 
-  return Promise.all(
-    sessions.map(async (session) => {
-      const [itemCount, completedCount] = await Promise.all([
-        db.todos.where("sessionId").equals(session.id).count(),
-        db.todos
-          .where("sessionId")
-          .equals(session.id)
-          .filter((todo) => todo.checked)
-          .count(),
-      ]);
+  for (const todo of todos) {
+    const current = counts.get(todo.sessionId) ?? {
+      itemCount: 0,
+      completedCount: 0,
+    };
+    current.itemCount += 1;
+    current.completedCount += Number(todo.checked);
+    counts.set(todo.sessionId, current);
+  }
 
-      return {
-        ...session,
-        itemCount,
-        completedCount,
-      };
-    }),
-  );
+  return sessions.map((session) => ({
+    ...session,
+    ...(counts.get(session.id) ?? { itemCount: 0, completedCount: 0 }),
+  }));
 }
 
 export async function updateSessionTitle(
@@ -141,6 +139,7 @@ export async function deleteTodo(todoId: string): Promise<void> {
 }
 
 export type TodoDraft = {
+  id?: string;
   text: string;
   checked: boolean;
   order: number;
@@ -153,30 +152,55 @@ export async function replaceTodosForSession(
   const now = Date.now();
   const normalizedDrafts = drafts
     .map((draft, index) => ({
+      id: draft.id,
       text: draft.text.trim(),
       checked: draft.checked,
       order: index + 1,
     }))
     .filter((draft) => draft.text.length > 0);
 
-  const todos: TodoItem[] = normalizedDrafts.map((draft) => ({
-    id: crypto.randomUUID(),
-    sessionId,
-    text: draft.text,
-    checked: draft.checked,
-    order: draft.order,
-    createdAt: now,
-    updatedAt: now,
-  }));
-
   await db.transaction("rw", db.sessions, db.todos, async () => {
-    await db.todos.where("sessionId").equals(sessionId).delete();
+    const existingTodos = await db.todos
+      .where("sessionId")
+      .equals(sessionId)
+      .toArray();
+    const existingById = new Map(existingTodos.map((todo) => [todo.id, todo]));
+    const todos = normalizedDrafts.map((draft) => {
+      const existing = draft.id ? existingById.get(draft.id) : undefined;
 
-    if (todos.length > 0) {
-      await db.todos.bulkAdd(todos);
+      return {
+        id: existing?.id ?? crypto.randomUUID(),
+        sessionId,
+        text: draft.text,
+        checked: draft.checked,
+        order: draft.order,
+        createdAt: existing?.createdAt ?? now,
+        updatedAt: existing ? now : now,
+      };
+    });
+    const nextIds = new Set(todos.map((todo) => todo.id));
+    const deletedIds = existingTodos
+      .filter((todo) => !nextIds.has(todo.id))
+      .map((todo) => todo.id);
+    const changedTodos = todos.filter((todo) => {
+      const existing = existingById.get(todo.id);
+      return (
+        !existing ||
+        existing.text !== todo.text ||
+        existing.checked !== todo.checked ||
+        existing.order !== todo.order
+      );
+    });
+
+    if (deletedIds.length > 0) {
+      await db.todos.bulkDelete(deletedIds);
     }
-
-    await db.sessions.update(sessionId, { updatedAt: now });
+    if (changedTodos.length > 0) {
+      await db.todos.bulkPut(changedTodos);
+    }
+    if (deletedIds.length > 0 || changedTodos.length > 0) {
+      await db.sessions.update(sessionId, { updatedAt: now });
+    }
   });
 
   return now;

@@ -26,7 +26,7 @@ export default defineConfig({
         start_url: "/",
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,webp}"],
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,woff2}"],
       },
     }),
   ],

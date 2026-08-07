@@ -24,7 +24,7 @@ export function SessionHeader({
       <div>
         <input
           aria-label="Session title"
-          className="text-3xl font-medium bg-transparent focus:outline-none p-0"
+          className="w-full rounded-sm bg-transparent p-0 text-3xl font-medium focus:outline-0"
           value={titleDraft}
           onChange={(event) => setTitleDraft(event.target.value)}
           onBlur={() => {

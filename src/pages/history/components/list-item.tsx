@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
 import { formatDate, formatDateTime } from "@/helpers/date";
 import type { SessionWithMeta } from "@/types";
 import {
@@ -6,16 +6,21 @@ import {
   setSessionArchived,
   updateSessionTitle,
 } from "@/data/store";
-import { FileIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  ClockIcon,
+  FileIcon,
+  type LucideIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SessionProgressLabel } from "@/components/session-progress";
-import { icons } from "lucide-react";
+import { LinkButton } from "@/components/link-button";
+import { ConfirmationDialog } from "@/components/confirmation-dialog";
 
-const Info = ({ icon, value }: { icon: keyof typeof icons; value: string }) => {
-  const Comp = icons[icon];
+const Info = ({ icon: Icon, value }: { icon: LucideIcon; value: string }) => {
   return (
     <p className="flex items-center gap-x-1 text-xs font-medium text-muted-foreground">
-      <Comp className="size-4" />
+      <Icon className="size-4" />
       {value}
     </p>
   );
@@ -27,49 +32,58 @@ type HistoryListItemProps = {
 };
 
 export function HistoryListItem({ session, refresh }: HistoryListItemProps) {
-  const handleRename = async (id: string, currentTitle: string) => {
-    const nextTitle = window.prompt("Rename session", currentTitle);
-    if (nextTitle === null) {
+  const [titleDraft, setTitleDraft] = useState(session.title);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const persistTitle = async () => {
+    if (titleDraft.trim() === session.title) {
       return;
     }
 
-    await updateSessionTitle(id, nextTitle);
+    setIsSaving(true);
+    await updateSessionTitle(session.id, titleDraft);
+    await refresh();
+    setIsSaving(false);
+  };
+
+  const handleArchive = async () => {
+    await setSessionArchived(session.id, !session.archived);
     await refresh();
   };
 
-  const handleArchive = async (id: string, archived: boolean) => {
-    await setSessionArchived(id, !archived);
-    await refresh();
-  };
-
-  const handleDelete = async (id: string) => {
-    const confirmed = window.confirm("Delete this session and all todos?");
-    if (!confirmed) {
-      return;
-    }
-
-    await deleteSession(id);
+  const handleDelete = async () => {
+    await deleteSession(session.id);
     await refresh();
   };
 
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 flex-1 items-start gap-x-4">
         <span className="shrink-0 rounded-md bg-blue-100 p-2">
           <FileIcon className="size-8 text-blue-500" />
         </span>
 
-        <div className="w-full max-w-sm flex-1 space-y-1">
-          <p className="text-xl font-bold leading-tight truncate">
-            {session.title}
-          </p>
+        <div className="w-full max-w-sm flex-1 gap-y-1">
+          <input
+            aria-label={`Session title: ${session.title}`}
+            className="w-full rounded-sm bg-transparent text-xl font-bold leading-tight focus:outline-0"
+            value={titleDraft}
+            disabled={isSaving}
+            onChange={(event) => setTitleDraft(event.target.value)}
+            onBlur={() => void persistTitle()}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.currentTarget.blur();
+              }
+            }}
+          />
 
           <Info
-            icon="Calendar"
+            icon={CalendarIcon}
             value={`Created ${formatDate(session.createdAt)}`}
           />
           <Info
-            icon="Clock"
+            icon={ClockIcon}
             value={`Last edited ${formatDateTime(session.updatedAt)}`}
           />
 
@@ -82,34 +96,41 @@ export function HistoryListItem({ session, refresh }: HistoryListItemProps) {
         </div>
       </div>
 
-      <div className="flex gap-x-2 w-full sm:w-auto sm:shrink-0">
-        <Link to={`/?sessionId=${session.id}`}>
-          <Button variant="link">Open</Button>
-        </Link>
-        <Button
-          variant="ghost"
-          onClick={() => {
-            void handleRename(session.id, session.title);
-          }}
-        >
-          Rename
-        </Button>
-        <Button
-          variant="outline"
-          onClick={() => {
-            void handleArchive(session.id, Boolean(session.archived));
-          }}
-        >
-          {session.archived ? "Unarchive" : "Archive"}
-        </Button>
-        <Button
-          variant="destructive"
-          onClick={() => {
-            void handleDelete(session.id);
-          }}
-        >
-          Delete
-        </Button>
+      <div className="flex flex-wrap gap-2 sm:w-auto sm:shrink-0">
+        <LinkButton
+          to={`/?sessionId=${session.id}`}
+          aria-label={`Open session ${session.title}`}
+          btnProps={{ variant: "link", children: "Open" }}
+        />
+        <ConfirmationDialog
+          trigger={
+            <Button
+              variant="outline"
+              aria-label={`${session.archived ? "Unarchive" : "Archive"} session ${session.title}`}
+            >
+              {session.archived ? "Unarchive" : "Archive"}
+            </Button>
+          }
+          title={`${session.archived ? "Unarchive" : "Archive"} session?`}
+          description={`Are you sure you want to ${session.archived ? "unarchive" : "archive"} "${session.title}"?`}
+          confirmLabel={session.archived ? "Unarchive" : "Archive"}
+          onConfirm={handleArchive}
+        />
+        <ConfirmationDialog
+          trigger={
+            <Button
+              variant="destructive"
+              aria-label={`Delete session ${session.title}`}
+            >
+              Delete
+            </Button>
+          }
+          title="Delete session?"
+          description={`Delete "${session.title}" and all of its tasks? This cannot be undone.`}
+          confirmLabel="Delete"
+          destructive
+          onConfirm={handleDelete}
+        />
       </div>
     </div>
   );

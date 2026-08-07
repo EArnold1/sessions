@@ -1,4 +1,4 @@
-import { icons } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import {
   Empty,
   EmptyContent,
@@ -14,11 +14,11 @@ type Props = {
   title: string;
   description: string;
   actionProps: LinkButtonProps;
-  icon: keyof typeof icons;
+  icon: LucideIcon;
 };
 
 export function EmptyState({ title, description, actionProps, icon }: Props) {
-  const Icon = icons[icon];
+  const Icon = icon;
 
   return (
     <Card>

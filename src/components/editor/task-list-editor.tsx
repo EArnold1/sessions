@@ -17,6 +17,14 @@ const CustomDocument = Document.extend({
 
 const SingleParagraphTaskItem = TaskItem.extend({
   content: "paragraph",
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      id: {
+        default: null,
+      },
+    };
+  },
   addKeyboardShortcuts() {
     return {
       Enter: () => this.editor.commands.splitListItem(this.name),
@@ -31,6 +39,7 @@ type TaskListEditorProps = {
   setTodos: (todos: TodoItem[]) => void;
   handleSetSession: (updatedAt: number) => void;
   setIsSaving: (value: boolean) => void;
+  onSaveError: (error: Error) => void;
 };
 
 export const TaskListEditor = ({
@@ -39,6 +48,7 @@ export const TaskListEditor = ({
   setTodos,
   handleSetSession,
   setIsSaving,
+  onSaveError,
 }: TaskListEditorProps) => {
   const isHydratingRef = useRef(false);
   const skipNextHydrationRef = useRef(false);
@@ -46,13 +56,19 @@ export const TaskListEditor = ({
   const debouncedPersist = useMemo(
     () =>
       debounce((drafts: ReturnType<typeof taskDocToTodos>) => {
-        void (async () => {
-          const updatedAt = await replaceTodosForSession(sessionId, drafts);
-          handleSetSession(updatedAt);
-          setIsSaving(false);
-        })();
+        void replaceTodosForSession(sessionId, drafts)
+          .then((updatedAt) => {
+            handleSetSession(updatedAt);
+            setIsSaving(false);
+          })
+          .catch((error: unknown) => {
+            onSaveError(
+              error instanceof Error ? error : new Error("Unable to save tasks"),
+            );
+            setIsSaving(false);
+          });
       }, 400),
-    [handleSetSession, sessionId, setIsSaving],
+    [handleSetSession, onSaveError, sessionId, setIsSaving],
   );
 
   const editor = useEditor({
@@ -71,17 +87,18 @@ export const TaskListEditor = ({
       }
 
       const drafts = taskDocToTodos(currentEditor.getJSON());
-      const now = Date.now();
       const nextTodos: TodoItem[] = drafts
         .filter((draft) => draft.text.length > 0)
         .map((draft) => ({
-          id: crypto.randomUUID(),
+          id: draft.id ?? crypto.randomUUID(),
           sessionId,
           text: draft.text,
           checked: draft.checked,
           order: draft.order,
-          createdAt: now,
-          updatedAt: now,
+          createdAt:
+            todos.find((todo) => todo.id === draft.id)?.createdAt ?? Date.now(),
+          updatedAt:
+            todos.find((todo) => todo.id === draft.id)?.updatedAt ?? Date.now(),
         }));
 
       skipNextHydrationRef.current = true;
@@ -94,7 +111,7 @@ export const TaskListEditor = ({
 
   useEffect(() => {
     return () => {
-      debouncedPersist.cancel();
+      debouncedPersist.flush();
     };
   }, [debouncedPersist]);
 

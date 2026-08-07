@@ -1,5 +1,6 @@
 export type DebouncedFunction<TArgs extends unknown[]> = ((...args: TArgs) => void) & {
   cancel: () => void;
+  flush: () => void;
 };
 
 export function debounce<TArgs extends unknown[]>(
@@ -7,8 +8,10 @@ export function debounce<TArgs extends unknown[]>(
   waitMs: number,
 ): DebouncedFunction<TArgs> {
   let timer: number | null = null;
+  let latestArgs: TArgs | null = null;
 
   const debounced = ((...args: TArgs) => {
+    latestArgs = args;
     if (timer !== null) {
       window.clearTimeout(timer);
     }
@@ -16,6 +19,7 @@ export function debounce<TArgs extends unknown[]>(
     timer = window.setTimeout(() => {
       callback(...args);
       timer = null;
+      latestArgs = null;
     }, waitMs);
   }) as DebouncedFunction<TArgs>;
 
@@ -23,6 +27,15 @@ export function debounce<TArgs extends unknown[]>(
     if (timer !== null) {
       window.clearTimeout(timer);
       timer = null;
+    }
+  };
+
+  debounced.flush = () => {
+    if (timer !== null && latestArgs) {
+      window.clearTimeout(timer);
+      callback(...latestArgs);
+      timer = null;
+      latestArgs = null;
     }
   };
 

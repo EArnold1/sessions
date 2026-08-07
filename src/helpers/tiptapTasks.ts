@@ -6,6 +6,7 @@ type TaskNode = {
   type: string;
   attrs?: {
     checked?: boolean;
+    id?: string;
   };
   content?: TaskNode[];
   text?: string;
@@ -49,7 +50,7 @@ export function todosToTaskDoc(todos: TodoItem[]): JSONContent {
           items.length > 0
             ? items.map((todo) => ({
                 type: "taskItem",
-                attrs: { checked: todo.checked },
+                attrs: { checked: todo.checked, id: todo.id },
                 content: [
                   {
                     type: "paragraph",
@@ -86,6 +87,7 @@ export function taskDocToTodos(doc: JSONContent): TodoDraft[] {
   collectTaskItems(root, taskNodes);
 
   return taskNodes.map((node, index) => ({
+    id: node.attrs?.id,
     text: extractText(node).trim(),
     checked: Boolean(node.attrs?.checked),
     order: index + 1,

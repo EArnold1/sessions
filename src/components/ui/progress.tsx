@@ -16,8 +16,8 @@ function Progress({
       {...props}
     >
       {children}
-      <ProgressTrack className="bg-muted-foreground">
-        <ProgressIndicator className="bg-background" />
+      <ProgressTrack className="bg-current/25">
+        <ProgressIndicator className="bg-current" />
       </ProgressTrack>
     </ProgressPrimitive.Root>
   );
@@ -63,7 +63,7 @@ function ProgressValue({ className, ...props }: ProgressPrimitive.Value.Props) {
   return (
     <ProgressPrimitive.Value
       className={cn(
-        "ml-auto text-sm text-muted-foreground tabular-nums",
+        "ml-auto text-sm text-current opacity-70 tabular-nums",
         className,
       )}
       data-slot="progress-value"

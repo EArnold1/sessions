@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { listSessions } from "@/data/store";
 import type { SessionWithMeta } from "@/types";
-import { RotateCcwClockIcon } from "lucide-react";
+import { RotateCcwClockIcon, SquareXIcon } from "lucide-react";
 import { HistoryList } from "@/pages/history/components/list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/empty-state";
@@ -10,9 +10,19 @@ import { Loader } from "@/components/loader";
 export function HistoryPage() {
   const [sessions, setSessions] = useState<SessionWithMeta[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   const refresh = async () => {
-    setSessions(await listSessions());
+    try {
+      setError(null);
+      setSessions(await listSessions());
+    } catch (loadError) {
+      setError(
+        loadError instanceof Error
+          ? loadError
+          : new Error("Unable to load session history"),
+      );
+    }
   };
 
   useEffect(() => {
@@ -20,10 +30,23 @@ export function HistoryPage() {
 
     const run = async () => {
       setIsLoading(true);
-      const data = await listSessions();
-      if (alive) {
-        setSessions(data);
-        setIsLoading(false);
+      try {
+        const data = await listSessions();
+        if (alive) {
+          setSessions(data);
+        }
+      } catch (loadError) {
+        if (alive) {
+          setError(
+            loadError instanceof Error
+              ? loadError
+              : new Error("Unable to load session history"),
+          );
+        }
+      } finally {
+        if (alive) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -43,24 +66,39 @@ export function HistoryPage() {
     );
   }
 
-  if (!sessions.length) {
+  if (error) {
     return (
       <EmptyState
-        title="No sessions yet."
-        description="Add a session to con"
-        icon="SquareX"
+        title="Unable to load history"
+        description={error.message}
+        icon={SquareXIcon}
         actionProps={{
-          btnProps: {
-            size: "sm",
-          },
+          btnProps: { size: "sm", children: "Return home" },
           to: "/",
         }}
       />
     );
   }
 
+  if (!sessions.length) {
+    return (
+      <EmptyState
+        title="No sessions yet."
+        description="Add a session to con"
+        icon={SquareXIcon}
+        actionProps={{
+          btnProps: {
+            size: "sm",
+          },
+          to: "/",
+          children: "Start a session",
+        }}
+      />
+    );
+  }
+
   return (
-    <Card className="w-full w-max-sm py-0 h-fit max-h-150 overflow-scroll gap-y-1">
+    <Card className="w-full py-0 h-fit max-h-150 overflow-scroll gap-y-1">
       <CardHeader className="bg-foreground text-background p-4">
         <CardTitle>
           <h1 className="flex gap-x-2 items-center">

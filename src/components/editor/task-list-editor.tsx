@@ -1,4 +1,3 @@
-import "../../editor-style.css";
 import { useEffect, useMemo, useRef } from "react";
 import type { TodoItem } from "@/types";
 import { replaceTodosForSession } from "@/data/store";

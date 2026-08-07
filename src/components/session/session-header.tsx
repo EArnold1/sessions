@@ -20,7 +20,7 @@ export function SessionHeader({
   persistTitle,
 }: SessionHeaderProps) {
   return (
-    <div className="flex md:flex-row flex-col justify-between items-center">
+    <div className="flex flex-col items-center justify-between md:flex-row">
       <div>
         <input
           aria-label="Session title"

@@ -26,7 +26,10 @@ export async function getSession(
 export async function listSessions(): Promise<SessionWithMeta[]> {
   const sessions = await db.sessions.orderBy("updatedAt").reverse().toArray();
   const todos = await db.todos.toArray();
-  const counts = new Map<string, { itemCount: number; completedCount: number }>();
+  const counts = new Map<
+    string,
+    { itemCount: number; completedCount: number }
+  >();
 
   for (const todo of todos) {
     const current = counts.get(todo.sessionId) ?? {

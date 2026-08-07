@@ -19,7 +19,7 @@ import { ConfirmationDialog } from "@/components/confirmation-dialog";
 
 const Info = ({ icon: Icon, value }: { icon: LucideIcon; value: string }) => {
   return (
-    <p className="flex items-center gap-x-1 text-xs font-medium text-muted-foreground">
+    <p className="text-muted-foreground flex items-center gap-x-1 text-xs font-medium">
       <Icon className="size-4" />
       {value}
     </p>
@@ -66,7 +66,7 @@ export function HistoryListItem({ session, refresh }: HistoryListItemProps) {
         <div className="w-full max-w-sm flex-1 gap-y-1">
           <input
             aria-label={`Session title: ${session.title}`}
-            className="w-full rounded-sm bg-transparent text-xl font-bold leading-tight focus:outline-0"
+            className="w-full rounded-sm bg-transparent text-xl leading-tight font-bold focus:outline-0"
             value={titleDraft}
             disabled={isSaving}
             onChange={(event) => setTitleDraft(event.target.value)}

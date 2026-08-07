@@ -98,12 +98,12 @@ export function HistoryPage() {
   }
 
   return (
-    <Card className="w-full py-0 h-fit max-h-150 overflow-scroll gap-y-1">
+    <Card className="h-fit max-h-150 w-full gap-y-1 overflow-scroll py-0">
       <CardHeader className="bg-foreground text-background p-4">
         <CardTitle>
-          <h1 className="flex gap-x-2 items-center">
+          <h1 className="flex items-center gap-x-2">
             <RotateCcwClockIcon />
-            <span className="font-medium text-xl">Session History</span>
+            <span className="text-xl font-medium">Session History</span>
           </h1>
         </CardTitle>
       </CardHeader>

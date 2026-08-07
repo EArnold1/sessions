@@ -63,7 +63,9 @@ export const TaskListEditor = ({
           })
           .catch((error: unknown) => {
             onSaveError(
-              error instanceof Error ? error : new Error("Unable to save tasks"),
+              error instanceof Error
+                ? error
+                : new Error("Unable to save tasks"),
             );
             setIsSaving(false);
           });

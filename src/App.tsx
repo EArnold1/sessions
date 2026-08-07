@@ -30,15 +30,15 @@ function App() {
   }, [location.pathname, location.search, pageTitle]);
 
   return (
-    <div className="h-min grid grid-cols-1 gap-y-4">
+    <div className="grid h-min grid-cols-1 gap-y-4">
       <a
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-background focus:p-3"
+        className="focus:bg-background sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:p-3"
         href="#main-content"
       >
         Skip to main content
       </a>
       <header className="flex flex-wrap justify-between gap-3 p-4">
-        <Link to="/" className="flex gap-x-2 font-bold items-center">
+        <Link to="/" className="flex items-center gap-x-2 font-bold">
           <SquareCheckIcon className="size-6" />
           TODO Sessions
         </Link>
@@ -83,7 +83,7 @@ function App() {
         ref={mainRef}
         id="main-content"
         tabIndex={-1}
-        className="w-full max-w-250 mx-auto container"
+        className="container mx-auto w-full max-w-250"
       >
         <Routes>
           <Route path="/" element={<HomePage />} />

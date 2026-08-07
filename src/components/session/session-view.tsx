@@ -155,7 +155,7 @@ export function SessionView({ sessionId }: SessionViewProps) {
   }
 
   return (
-    <Card className="w-full max-h-140 overflow-scroll pt-0 pb-2">
+    <Card className="max-h-140 w-full overflow-scroll pt-0 pb-2">
       <CardHeader className="bg-foreground/10 text-foreground p-4">
         <CardTitle>
           <SessionHeader
@@ -168,7 +168,7 @@ export function SessionView({ sessionId }: SessionViewProps) {
           />
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4 max-h-135 overflow-scroll">
+      <CardContent className="max-h-135 overflow-scroll p-4">
         <TaskListEditor
           sessionId={session.id}
           todos={todos}
@@ -178,7 +178,7 @@ export function SessionView({ sessionId }: SessionViewProps) {
           onSaveError={setError}
         />
       </CardContent>
-      <CardFooter className="gap-x-1 px-4 w-full items-center text-xs text-muted-foreground">
+      <CardFooter className="text-muted-foreground w-full items-center gap-x-1 px-4 text-xs">
         {isSaving ? (
           <>
             <CloudSync />

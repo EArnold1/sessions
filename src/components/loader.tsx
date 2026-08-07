@@ -20,7 +20,7 @@ export const Loader = ({
   return (
     <Card
       className={cn(
-        "border-border/60 shadow-sm motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 duration-300",
+        "border-border/60 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 shadow-sm duration-300",
         isPanel && "w-full",
         className,
       )}
@@ -32,11 +32,11 @@ export const Loader = ({
         )}
         aria-live="polite"
       >
-        <Spinner className="size-5 text-muted-foreground" />
+        <Spinner className="text-muted-foreground size-5" />
         <div className="space-y-0.5">
-          <p className="text-sm font-medium leading-tight">{title}</p>
+          <p className="text-sm leading-tight font-medium">{title}</p>
           {message ? (
-            <p className="text-sm text-muted-foreground leading-tight">
+            <p className="text-muted-foreground text-sm leading-tight">
               {message}
             </p>
           ) : null}

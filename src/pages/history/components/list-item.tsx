@@ -100,7 +100,10 @@ export function HistoryListItem({ session, refresh }: HistoryListItemProps) {
         <LinkButton
           to={`/?sessionId=${session.id}`}
           aria-label={`Open session ${session.title}`}
-          btnProps={{ variant: "link", children: "Open" }}
+          btnProps={{
+            variant: "link",
+            children: "Open",
+          }}
         />
         <ConfirmationDialog
           trigger={

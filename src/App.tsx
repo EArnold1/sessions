@@ -49,6 +49,7 @@ function App() {
             icon={ThemeIcon}
             aria-label={`Theme mode: ${theme}. Click to switch mode`}
             title={`Theme mode: ${theme}`}
+            tooltip="Change theme"
             onClick={toggleTheme}
           />
 
@@ -61,6 +62,7 @@ function App() {
             }}
             icon={PlusIcon}
             aria-label="Start new session"
+            tooltip="Start new session"
           />
 
           <LinkButton

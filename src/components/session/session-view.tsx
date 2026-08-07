@@ -156,7 +156,7 @@ export function SessionView({ sessionId }: SessionViewProps) {
 
   return (
     <Card className="w-full max-h-140 overflow-scroll pt-0 pb-2">
-      <CardHeader className="bg-foreground text-background p-4">
+      <CardHeader className="bg-foreground/10 text-foreground p-4">
         <CardTitle>
           <SessionHeader
             titleDraft={titleDraft}

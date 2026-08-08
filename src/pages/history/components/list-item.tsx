@@ -7,6 +7,7 @@ import {
   updateSessionTitle,
 } from "@/data/store";
 import {
+  ArchiveIcon,
   CalendarIcon,
   ClockIcon,
   FileIcon,
@@ -16,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { SessionProgressLabel } from "@/components/session-progress";
 import { LinkButton } from "@/components/link-button";
 import { ConfirmationDialog } from "@/components/confirmation-dialog";
+import { Badge } from "@/components/ui/badge";
 
 const Info = ({ icon: Icon, value }: { icon: LucideIcon; value: string }) => {
   return (
@@ -69,7 +71,11 @@ export function HistoryListItem({ session, refresh }: HistoryListItemProps) {
             className="w-full rounded-sm bg-transparent text-xl leading-tight font-bold focus:outline-0"
             value={titleDraft}
             disabled={isSaving}
-            onChange={(event) => setTitleDraft(event.target.value)}
+            onChange={(event) => {
+              const value = event.target.value;
+              if (value.length > 20) return;
+              setTitleDraft(value);
+            }}
             onBlur={() => void persistTitle()}
             onKeyDown={(event) => {
               if (event.key === "Enter") {
@@ -86,6 +92,13 @@ export function HistoryListItem({ session, refresh }: HistoryListItemProps) {
             icon={ClockIcon}
             value={`Last edited ${formatDateTime(session.updatedAt)}`}
           />
+
+          {session.archived && (
+            <Badge>
+              <ArchiveIcon data-icon="inline-start" />
+              archived
+            </Badge>
+          )}
 
           <div className="mt-4">
             <SessionProgressLabel

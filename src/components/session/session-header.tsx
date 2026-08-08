@@ -20,13 +20,17 @@ export function SessionHeader({
   persistTitle,
 }: SessionHeaderProps) {
   return (
-    <div className="flex flex-col items-center justify-between md:flex-row">
+    <div className="flex flex-col items-center justify-between gap-y-2 md:flex-row">
       <div>
         <input
           aria-label="Session title"
           className="w-full rounded-sm bg-transparent p-0 text-3xl font-medium focus:outline-0"
           value={titleDraft}
-          onChange={(event) => setTitleDraft(event.target.value)}
+          onChange={(event) => {
+            const value = event.target.value;
+            if (value.length > 20) return;
+            setTitleDraft(value);
+          }}
           onBlur={() => {
             void persistTitle();
           }}

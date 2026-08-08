@@ -98,7 +98,7 @@ export function HistoryPage() {
   }
 
   return (
-    <Card className="h-fit max-h-150 w-full gap-y-1 overflow-scroll py-0">
+    <Card className="h-[calc(100svh-8rem)] w-full gap-y-1 overflow-scroll py-0">
       <CardHeader className="bg-foreground/10 text-foreground p-4">
         <CardTitle>
           <h1 className="flex items-center gap-x-2">

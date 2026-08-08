@@ -39,6 +39,26 @@ pnpm install
 pnpm dev
 ```
 
+## Run with Docker
+
+The published image is self-contained: it builds and serves the web app on port
+`9200`.
+
+```bash
+docker run --rm -p 9200:9200 arnolddd/sessions:latest
+```
+
+Open [http://localhost:9200](http://localhost:9200). Sessions are stored in the
+visitor's browser (IndexedDB), so there is no server database to configure and
+data is not shared between browsers or devices.
+
+### Build locally
+
+```bash
+docker build -t sessions:local .
+docker run --rm -p 9200:9200 sessions:local
+```
+
 ## Future Plans
 
 Sessions is intentionally small, but there are a few things I'd like to explore as it grows.

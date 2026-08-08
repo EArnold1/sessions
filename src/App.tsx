@@ -40,7 +40,7 @@ function App() {
       <header className="flex flex-wrap justify-between gap-3 p-4">
         <Link to="/" className="flex items-center gap-x-2 font-bold">
           <SquareCheckIcon className="size-6" />
-          TODO Sessions
+          Sessions
         </Link>
         <nav className="flex flex-wrap gap-2">
           <IconButton
@@ -83,7 +83,7 @@ function App() {
         ref={mainRef}
         id="main-content"
         tabIndex={-1}
-        className="container mx-auto w-full max-w-250"
+        className="container mx-auto w-full max-w-250 px-4 outline-0"
       >
         <Routes>
           <Route path="/" element={<HomePage />} />

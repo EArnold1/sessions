@@ -155,7 +155,7 @@ export function SessionView({ sessionId }: SessionViewProps) {
   }
 
   return (
-    <Card className="max-h-140 w-full overflow-scroll pt-0 pb-2">
+    <Card className="h-[calc(100svh-8rem)] w-full overflow-scroll pt-0 pb-2 lg:max-h-140">
       <CardHeader className="bg-foreground/10 text-foreground p-4">
         <CardTitle>
           <SessionHeader
@@ -168,7 +168,7 @@ export function SessionView({ sessionId }: SessionViewProps) {
           />
         </CardTitle>
       </CardHeader>
-      <CardContent className="max-h-135 overflow-scroll p-4">
+      <CardContent className="h-full overflow-scroll p-4">
         <TaskListEditor
           sessionId={session.id}
           todos={todos}

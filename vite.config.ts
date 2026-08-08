@@ -17,13 +17,45 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       manifest: {
-        name: "TODO Sessions",
-        short_name: "TODO Sessions",
+        name: "Sessions",
+        short_name: "Sessions",
         description: "Offline-first TODO session tracker",
-        theme_color: "#0f766e",
-        background_color: "#f4efe3",
+        theme_color: "#000000",
+        background_color: "#000000",
         display: "standalone",
         start_url: "/",
+        icons: [
+          {
+            src: "/icon-192.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
+          {
+            src: "/icon-512.png",
+            sizes: "512x512",
+            type: "image/png",
+          },
+          {
+            src: "/icon-512-maskable.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
+          },
+        ],
+
+        screenshots: [
+          {
+            src: "/screenshots/desktop.png",
+            sizes: "1920x1080",
+            type: "image/png",
+            form_factor: "wide",
+          },
+          {
+            src: "/screenshots/mobile.png",
+            sizes: "390x844",
+            type: "image/png",
+          },
+        ],
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,woff2}"],

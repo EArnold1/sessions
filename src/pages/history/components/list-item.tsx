@@ -63,7 +63,7 @@ export function HistoryListItem({ session, refresh }: HistoryListItemProps) {
           <FileIcon className="size-8 text-blue-500" />
         </span>
 
-        <div className="w-full max-w-sm flex-1 gap-y-1">
+        <div className="flex w-full max-w-sm flex-1 flex-col gap-y-1">
           <input
             aria-label={`Session title: ${session.title}`}
             className="w-full rounded-sm bg-transparent text-xl leading-tight font-bold focus:outline-0"

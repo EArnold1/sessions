@@ -1,75 +1,71 @@
-# React + TypeScript + Vite
+# Sessions
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sessions is a concentrated to-do list app built with an **offline-first**, **reliable**, and **noiseless** approach in mind.
 
-Currently, two official plugins are available:
+I built it because I wanted a simple way to manage my to-dos without too much stress. No complicated productivity system, no endless configuration — just a place to write down what needs to get done and focus on it.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Demo
 
-## React Compiler
+![Application Demo](./docs/demo.gif)
+![Application History Screenshot](./docs/history-demo.png)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features
 
-## Expanding the ESLint configuration
+- **Sessions** — Group your to-dos into focused sessions.
+- **Offline-first** — Your sessions are stored locally, so the app works without an internet connection.
+- **Session history** — Keep track of previous sessions and revisit them when needed.
+- **Simple task management** — Add, edit, reorder, complete, and remove tasks without unnecessary complexity.
+- **Themes** — Light, dark, and system themes.
+- **PWA** — Install Sessions and use it like a native application.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Why Sessions?
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+I don't think a to-do list needs to be a productivity system.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Sometimes you just need somewhere to put the things you need to do, without having to think about priorities, labels, projects, reminders, deadlines, and a dozen other things before you can get started.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Sessions is built around that idea.
 
+**Write it down. Work through it. Move on.**
+
+## Getting Started
+
+You'll need [Node.js](https://nodejs.org/) and [pnpm](https://pnpm.io/).
+
+```bash
+git clone https://github.com/EArnold1/todo-sessions.git
+cd todo-sessions
+pnpm install
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Future Plans
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Sessions is intentionally small, but there are a few things I'd like to explore as it grows.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### BYOS (Bring Your Own Server)
 
-```
+A planned feature is **BYOS (Bring Your Own Server)**.
+
+The goal is to allow users to connect Sessions to a server they control and use it to sync their sessions and to-dos across devices.
+
+Sessions will remain **offline-first**, with the server acting as an optional way to keep your data in sync rather than making it a requirement for the app to work.
+
+## Philosophy
+
+Sessions will continue to prioritize:
+
+- **Focus over features**
+- **Simplicity over complexity**
+- **Reliability over dependency**
+- **Less noise over more functionality**
+
+If a feature doesn't make managing your to-dos simpler, it probably doesn't belong here.
+
+## Contributing
+
+If you have an idea, bug report, or improvement, feel free to open an issue or submit a pull request.
+
+Before contributing, please keep the project's core philosophy in mind:
+
+> Does this make managing tasks simpler, or does it give the user another thing to manage?

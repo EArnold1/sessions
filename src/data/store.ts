@@ -142,7 +142,7 @@ export async function deleteTodo(todoId: string): Promise<void> {
 }
 
 export type TodoDraft = {
-  id?: string;
+  id: string;
   text: string;
   checked: boolean;
   order: number;
@@ -172,7 +172,7 @@ export async function replaceTodosForSession(
       const existing = draft.id ? existingById.get(draft.id) : undefined;
 
       return {
-        id: existing?.id ?? crypto.randomUUID(),
+        id: existing?.id ?? draft.id,
         sessionId,
         text: draft.text,
         checked: draft.checked,

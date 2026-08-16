@@ -91,11 +91,8 @@ export const TaskListEditor = ({
       const nextTodos: TodoItem[] = drafts
         .filter((draft) => draft.text.length > 0)
         .map((draft) => ({
-          id: draft.id ?? crypto.randomUUID(),
+          ...draft,
           sessionId,
-          text: draft.text,
-          checked: draft.checked,
-          order: draft.order,
           createdAt:
             todos.find((todo) => todo.id === draft.id)?.createdAt ?? Date.now(),
           updatedAt:

@@ -87,7 +87,7 @@ export function taskDocToTodos(doc: JSONContent): TodoDraft[] {
   collectTaskItems(root, taskNodes);
 
   return taskNodes.map((node, index) => ({
-    id: node.attrs?.id,
+    id: crypto.randomUUID(),
     text: extractText(node).trim(),
     checked: Boolean(node.attrs?.checked),
     order: index + 1,
